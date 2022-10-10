@@ -31,9 +31,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +51,7 @@ import java.util.List;
 
 // source:  https://github.com/android/connectivity-samples/blob/main/BluetoothLeGatt/Application/src/main/java/com/example/android/bluetoothlegatt/DeviceControlActivity.java
 
-public class DeviceControlActivity extends Activity {
+public class DeviceControlActivity extends AppCompatActivity {
     private final static String TAG = DeviceControlActivity.class.getSimpleName();
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
@@ -171,6 +174,33 @@ public class DeviceControlActivity extends Activity {
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (TextView) findViewById(R.id.data_value);
 
+        Button btnConnect = findViewById(R.id.btnGattConnect);
+        btnConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // check for null
+                try {
+                    System.out.println("mDeviceAddress: " + mDeviceAddress);
+                } catch (NullPointerException e) {
+                    System.out.println("mDeviceAddress is NULL");
+                }
+                try {
+                    System.out.println("mDeviceName: " + mDeviceName);
+                } catch (NullPointerException e) {
+                    System.out.println("mDeviceName is NULL");
+                }
+                try {
+                    System.out.println("mBluetoothLeService.toString: " + mBluetoothLeService.toString());
+                } catch (NullPointerException e) {
+                    System.out.println("mBluetoothLeService is NULL");
+                }
+                // todo check here - mBluetoothLeService is NULL
+                mBluetoothLeService.connect(mDeviceAddress);
+            }
+        });
+
+        getSupportActionBar().setTitle(mDeviceName); // todo check for update
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // todo check for update
         //getActionBar().setTitle(mDeviceName); // todo check for update
         //getActionBar().setDisplayHomeAsUpEnabled(true); // todo check for update
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
