@@ -35,6 +35,11 @@ public class DeviceScanActivity extends AppCompatActivity {
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 5000; // 5000 = 5 seconds
 
+    /**
+     * Return Intent extra
+     */
+    public static String EXTRA_DEVICE_ADDRESS = "device_address";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,13 +86,12 @@ public class DeviceScanActivity extends AppCompatActivity {
                 }
                 System.out.println("*** MAC: " + address);
 
-                /*
                 // Create the Intent and include the MAC address
-                Intent intent = new Intent(DeviceListOwnActivity.this, MainActivity.class);
+                Intent intent = new Intent(DeviceScanActivity.this, MainActivity.class);
                 intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
                 startActivity(intent);
                 finish();
-                */
+
 
 
             }
@@ -119,17 +123,18 @@ public class DeviceScanActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("MissingPermission")
     // Device scan callback.
     private ScanCallback leScanCallback =
             new ScanCallback() {
                 @Override
                 public void onScanResult(int callbackType, ScanResult result) {
                     super.onScanResult(callbackType, result);
-                    @SuppressLint("MissingPermission") String deviceInfos =
+                    String deviceInfos =
                             "name: " + result.getDevice().getName()
                             + " type: " + result.getDevice().getType()
                             + " address: " + result.getDevice().getAddress();
-                    scannedDevicesArrayAdapter.add(result.getDevice().getAddress());
+                    scannedDevicesArrayAdapter.add(deviceInfos);
                     //leDeviceListAdapter.notifyDataSetChanged();
                 }
             };

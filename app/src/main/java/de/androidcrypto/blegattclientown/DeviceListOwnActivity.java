@@ -3,6 +3,7 @@ package de.androidcrypto.blegattclientown;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +27,8 @@ public class DeviceListOwnActivity extends AppCompatActivity {
     ProgressBar progressBar;
 
     ArrayAdapter<String> scannedDevicesArrayAdapter;
-    private BluetoothAdapter mBtAdapter;
+    BluetoothManager bluetoothManager;
+    BluetoothAdapter bluetoothAdapter;
 
     /**
      * Return Intent extra
@@ -59,7 +61,7 @@ public class DeviceListOwnActivity extends AppCompatActivity {
         registerReceiver(mReceiver, filter);
 
         // Get the local Bluetooth adapter
-        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +81,7 @@ public class DeviceListOwnActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 System.out.println("This item was clicked: " + i);
                 // Cancel discovery because it's costly and we're about to connect
-                mBtAdapter.cancelDiscovery();
+                bluetoothAdapter.cancelDiscovery();
                 // Get the device MAC address, which is the last 17 chars in the View
                 String info = ((TextView) view).getText().toString();
                 String address = info.substring(info.length() - 17);
@@ -154,12 +156,12 @@ public class DeviceListOwnActivity extends AppCompatActivity {
         //Log.d(TAG, "doDiscovery()");
 
         // If we're already discovering, stop it
-        if (mBtAdapter.isDiscovering()) {
-            mBtAdapter.cancelDiscovery();
+        if (bluetoothAdapter.isDiscovering()) {
+            bluetoothAdapter.cancelDiscovery();
         }
 
         // Request discover from BluetoothAdapter
-        mBtAdapter.startDiscovery();
+        bluetoothAdapter.startDiscovery();
     }
 
     @SuppressLint("MissingPermission")
@@ -167,9 +169,9 @@ public class DeviceListOwnActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if (mBtAdapter != null) {
+        if (bluetoothAdapter != null) {
             // Make sure we're not doing discovery anymore
-            mBtAdapter.cancelDiscovery();
+            bluetoothAdapter.cancelDiscovery();
         }
 
         // Unregister broadcast listeners
