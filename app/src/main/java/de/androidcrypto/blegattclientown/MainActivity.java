@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -56,15 +57,18 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(activity, BLE_PERMISSIONS, requestCode);
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /*
         // inflate option menu
         Toolbar myToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(myToolbar);
 
+         */
         requestBlePermissions(this, PERMISSIONS_REQUEST_CODE);
 
         // Check if BLE is supported on the device.
@@ -80,6 +84,15 @@ public class MainActivity extends AppCompatActivity {
 
         Button scan = findViewById(R.id.btnMainScanForLeDevices);
         scan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, DeviceScanActivityOwn.class);
+                startActivity(intent);
+            }
+        });
+
+        Button  startLeGattService = findViewById(R.id.btnMainStartLeGattClient);
+        startLeGattService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, DeviceScanActivity.class);
@@ -99,9 +112,10 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println("MAC address received: " + macAddressFromScan + " ... try to connect with...");
                     //appendLog("MAC address received: " + macAddressFromScan + " ... try to connect with...");
                     // Get the BluetoothDevice object
-                    //BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddressFromScan);
+                    BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddressFromScan);
                     //ConnectThread connect = new ConnectThread(device, MY_UUID);
                     //connect.start();
+
 
                     // https://developer.android.com/guide/topics/connectivity/bluetooth/connect-gatt-server
 
@@ -112,56 +126,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-
-    /**
-     * tasks for the menu
-     * @param menu
-     */
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
-
-        /**
-         * resets the connection, log and chat
-         */
-        MenuItem mResetApp = menu.findItem(R.id.action_reset);
-        mResetApp.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //Intent i = new Intent(MainActivity.this, AddEntryActivity.class);
-                //startActivity(i);
-                //exportDumpMail();
-
-                /*
-                //textViewLog.setText("app reset");
-                //textViewChat.setText("");
-                disableChatInput();
-                if (mConnectThread != null) mConnectThread.cancel();
-                if (mAcceptThread != null) mAcceptThread.cancel();
-                startServer();
-
-                 */
-
-                return false;
-            }
-        });
-
-        MenuItem mExportFile = menu.findItem(R.id.action_export_file);
-        mExportFile.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //Intent i = new Intent(MainActivity.this, AddEntryActivity.class);
-                //startActivity(i);
-                //exportDumpFile();
-                return false;
-            }
-        });
-        return super.onCreateOptionsMenu(menu);
-    }
-
 
 }
